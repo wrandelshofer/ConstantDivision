@@ -25,7 +25,7 @@ public class ConstantDivision {
      */
     public static long computeM_u32(int d) {
         // M = ceil( (1<<64) / d ), d > 0
-        return Long.divideUnsigned(0xFFFFFFFFFFFFFFFFL,d)  + 1;
+        return Long.divideUnsigned(0xFFFFFFFFFFFFFFFFL, d) + 1;
     }
 
     /**
@@ -62,9 +62,10 @@ public class ConstantDivision {
         // M = floor( (1<<64) / d ) + 1
         // you must have that d is different from 0 and -2147483648
         // if d = -1 and a = -2147483648, the result is undefined
-        if (d < 0)
+        if (d < 0) {
             d = -d;
-        return Long.divideUnsigned(0xFFFFFFFFFFFFFFFFL,d)  + 1 + ((d & (d - 1)) == 0 ? 1 : 0);
+        }
+        return Long.divideUnsigned(0xFFFFFFFFFFFFFFFFL, d) + 1 + ((d & (d - 1)) == 0 ? 1 : 0);
     }
 
     /**
@@ -82,9 +83,9 @@ public class ConstantDivision {
      * be one of -1, 1, or -2147483648.
      */
     public static int fastdiv_s32(int a, long M, int d) {
-        long highbits =  Math.multiplyHigh(M, a);
+        int highbits =(int) Math.multiplyHigh(M, a);
         highbits += (a < 0 ? 1 : 0);
-        return (int) (d < 0 ? -highbits : highbits);
+        return (d < 0 ? -highbits : highbits);
     }
 
 }
