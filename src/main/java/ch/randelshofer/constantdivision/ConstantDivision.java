@@ -80,7 +80,7 @@ public class ConstantDivision {
 
     /**
      * Computes (a / d) given precomputed M, assumes that d must not
-     * be one of -1, 1, or -2147483648.
+     * be one of -2, -1, 1, 2, or -2147483648.
      */
     public static int fastdiv_s32(int a, long M, int d) {
         int highbits =(int) Math.multiplyHigh(M, a);

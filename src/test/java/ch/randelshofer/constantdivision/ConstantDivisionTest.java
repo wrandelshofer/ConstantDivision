@@ -3,32 +3,43 @@ package ch.randelshofer.constantdivision;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 class ConstantDivisionTest {
     @TestFactory
     public Stream<DynamicTest> dynamicTests_signed() {
-        Random rng=new Random(0);
-        return Stream.generate(()->Map.entry(rng.nextInt(),(rng.nextInt()&0xffff)*(rng.nextBoolean()?-1:1)))
-                .filter(e->e.getValue()!=1&&e.getValue()!=0)
+        Random rng = new Random(0);
+        return Stream.generate(() -> Map.entry(rng.nextInt(), (rng.nextInt() & 0xffff) * (rng.nextBoolean() ? -1 : 1)))
+                .filter(e -> e.getValue() != 1 && e.getValue() != 0)
                 .distinct()
                 .limit(10000)
-                .map(e -> dynamicTest(e.getKey()+"/"+e.getValue(),
-                        () -> testSigned(e.getKey(),e.getValue()))
-                        );
+                .map(e -> dynamicTest(e.getKey() + "/" + e.getValue(),
+                        () -> testSigned(e.getKey(), e.getValue()))
+                );
 
     }
 
-    private void testSigned(int dividend,int divisor) {
+    @TestFactory
+    public Stream<DynamicTest> dynamicTests_signed_divisorIsPowerOf2() {
+        Random rng = new Random(0);
+        return Stream.generate(() -> Map.entry(rng.nextInt(), (1 << (rng.nextInt(16) + 1)) * (rng.nextBoolean() ? -1 : 1)))
+                .filter(e -> e.getValue() != 1 && e.getValue() != 0)
+                .distinct()
+                .limit(10000)
+                .map(e -> dynamicTest(e.getKey() + "/" + e.getValue(),
+                        () -> testSigned(e.getKey(), e.getValue()))
+                );
 
-        int expectedDivision = dividend/divisor;
+    }
+
+    private void testSigned(int dividend, int divisor) {
+
+        int expectedDivision = dividend / divisor;
         int expectedRemainder = dividend%divisor;
         long M = ConstantDivision.computeM_s32(divisor);
         int actualDivision = ConstantDivision.fastdiv_s32(dividend, M,(divisor));
